@@ -1,0 +1,40 @@
+services:
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_PID: Developer
+      MSSQL_SA_PASSWORD: "LocalDev_Only_ChangeMe123!"
+    ports:
+      - "1433:1433"
+    volumes:
+      - sql_data:/var/opt/mssql
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -C -S localhost -U sa -P 'LocalDev_Only_ChangeMe123!' -Q 'SELECT 1'"]
+      interval: 10s
+      timeout: 5s
+      retries: 15
+
+  api:
+    build: ./backend
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__Default: "Server=db,1433;Database=VirtualShop;User Id=sa;Password=LocalDev_Only_ChangeMe123!;TrustServerCertificate=True"
+    ports:
+      - "5193:5193"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "4200:80"
+    depends_on:
+      - api
+
+volumes:
+  sql_data:
+
+
+ 
