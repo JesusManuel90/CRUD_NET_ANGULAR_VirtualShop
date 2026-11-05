@@ -12,6 +12,11 @@ builder.Services.AddOpenApi();
 
 var app = builder.Build();
 
+var reader = new SqlScriptReader(
+    app.Services.GetRequiredService<IWebHostEnvironment>(),
+    app.Services.GetRequiredService<IConfiguration>());
+var reader2 = reader.ReadSqlScriptAsync();
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {

@@ -11,6 +11,7 @@
 *.user
 *.suo
 *.rsuser
+*.sql
 
 # Logs y archivos temporales
 *.log
